@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/akirak/org-offtime.svg?branch=master)](https://travis-ci.org/akirak/org-offtime)
+
 # org-offtime.el
 
 org-offtime.el lets you track off-time (break/nap/etc.) in the Emacs Org-Mode. "Starting an off-time clock" means running the following actions in sequence:
