@@ -41,36 +41,39 @@
   "List of functions to run after an off-time command is run.")
 
 (defun offtime--shell-command (cmd)
-  "Run a shell command with proper hooks for an off-time event."
+  "Run CMD with proper hooks for an off-time event."
   (run-hooks 'offtime-pre-hook)
   (shell-command-to-string cmd)
   (run-hooks 'offtime-post-hook))
-
-(defun offtime-suspend ()
-  "Suspend the computer."
-  (interactive)
-  (offtime--shell-command offtime-suspend-command))
 
 (defcustom offtime-suspend-command "systemctl suspend"
   "Shell command used to suspend the computer."
   :group 'offtime
   :type 'string)
 
-(defun offtime-lock ()
-  "Lock screen."
+;;;###autoload
+(defun offtime-suspend ()
+  "Suspend the computer."
   (interactive)
-  (offtime--shell-command offtime-lock-command))
+  (offtime--shell-command offtime-suspend-command))
 
 (defcustom offtime-lock-commands
   '("physlock" "slock")
   "List of shell commands that can be used to lock the screen."
-  :type '(list string))
+  :type '(list string)
+  :group 'offtime)
 
 (defcustom offtime-lock-command
   (car (cl-remove-if-not 'executable-find offtime-lock-commands))
   "Shell command used to lock the screen."
   :group 'offtime
   :type 'string)
+
+;;;###autoload
+(defun offtime-lock ()
+  "Lock screen."
+  (interactive)
+  (offtime--shell-command offtime-lock-command))
 
 (provide 'offtime)
 ;;; offtime.el ends here

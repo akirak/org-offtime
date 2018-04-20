@@ -38,7 +38,6 @@
 ;;; Code:
 
 (require 'cl-lib)
-(require 'seq)
 (require 'subr-x)
 (require 'offtime)
 (require 'org)
@@ -62,25 +61,25 @@ omitted."
                            (find-file-noselect org-offtime-file))
     (setq org-outline-path-cache nil)
     (mapcar 'cdr
-            (seq-sort (lambda (x y)
-                        (let ((a (car x))
-                              (b (car y)))
-                          (cond
-                           ((and a b) (< (float-time a) (float-time b)))
-                           (a t)
-                           (b nil))))
-                      (org-with-wide-buffer
-                       (org-map-entries
-                        (lambda ()
-                          (let ((time (org-get-scheduled-time nil)))
-                            (cons time
-                                  (cons (concat (when (and format-with-schedule
-                                                           time)
-                                                  (format-time-string "%F %R: " time))
-                                                (org-offtime--format-headline))
-                                        (point-marker)))))
-                        nil nil
-                        'archive 'comment '(org-entry-is-done-p)))))))
+            (sort (org-with-wide-buffer
+                   (org-map-entries
+                    (lambda ()
+                      (let ((time (org-get-scheduled-time nil)))
+                        (cons time
+                              (cons (concat (when (and format-with-schedule
+                                                       time)
+                                              (format-time-string "%F %R: " time))
+                                            (org-offtime--format-headline))
+                                    (point-marker)))))
+                    nil nil
+                    'archive 'comment '(org-entry-is-done-p)))
+                  (lambda (x y)
+                    (let ((a (car x))
+                          (b (car y)))
+                      (cond
+                       ((and a b) (< (float-time a) (float-time b)))
+                       (a t)
+                       (b nil))))))))
 
 (defun org-offtime--format-headline ()
   "Format the outline path of the current heading."
@@ -92,8 +91,16 @@ omitted."
   :group 'org-offtime
   :type 'function)
 
+(defcustom org-offtime-clock-out nil
+  "Automatically clock out after running an action.
+
+If you use systemctl to suspend the computer, you may have to set this value to
+nil."
+  :type 'symbol
+  :group 'org-offtime)
+
 (defun org-offtime--clock-in (cand &optional func)
-  "Start an off-time clock at MARKER and run the default action.
+  "Start an off-time clock at CAND and run the default action.
 
 FUNC is called after clocking in."
   (let ((marker (cond
@@ -109,22 +116,14 @@ FUNC is called after clocking in."
         (funcall action)
         (when org-offtime-clock-out
           (org-clock-out))))))
-
 ;;;###autoload
+
 (defun org-offtime-clock-in ()
-  "Start an off-time clock on the current headline in org-mode."
+  "Start an off-time clock on the current headline in org mode."
   (interactive)
   (unless (eq major-mode 'org-mode)
-    (error "not in org-mode"))
+    (error "Not in org-mode"))
   (org-offtime--clock-in (point-marker)))
-
-(defcustom org-offtime-clock-out nil
-  "Automatically clock out after running an action.
-
-If you use systemctl to suspend the computer, you may have to set this value to
-nil."
-  :type 'symbol
-  :group 'org-offtime)
 
 ;;;###autoload
 (defun org-offtime (&optional func)
@@ -136,24 +135,6 @@ FUNC is a function used to enter the off-time state, e.g. `offtime-suspend'."
          (cand (completing-read "off-time: " cands)))
     (when cand
       (org-offtime--clock-in (or (assoc cand cands) cand) func))))
-
-;;;###autoload
-(defun counsel-org-offtime ()
-  "Use Ivy to enter off-time."
-  (interactive)
-  (require 'ivy)
-  (ivy-read "off-time: " (org-offtime--get-headings :format-with-schedule t)
-            :require-match nil
-            :caller 'counsel-org-offtime
-            :action '(1 ("o" org-offtime--clock-in "default")
-                        ("s"
-                         (lambda (cand)
-                           (org-offtime--clock-in cand 'offtime-suspend))
-                         "suspend")
-                        ("l"
-                         (lambda (cand)
-                           (org-offtime--clock-in cand 'offtime-lock))
-                         "lock"))))
 
 (defun org-offtime--create-headline (path)
   "Create a headline from PATH."
