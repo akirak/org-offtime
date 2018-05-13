@@ -121,7 +121,7 @@ FUNC is called after clocking in."
 (defun org-offtime-clock-in ()
   "Start an off-time clock on the current headline in org mode."
   (interactive)
-  (unless (eq major-mode 'org-mode)
+  (unless (derived-mode-p 'org-mode)
     (error "Not in org-mode"))
   (org-offtime--clock-in (point-marker)))
 
