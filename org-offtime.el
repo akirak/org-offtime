@@ -59,27 +59,27 @@ Archived items, comment entries, and entries with one of the done states are
 omitted."
   (with-current-buffer (or (find-buffer-visiting org-offtime-file)
                            (find-file-noselect org-offtime-file))
-    (setq org-outline-path-cache nil)
-    (mapcar 'cdr
-            (sort (org-with-wide-buffer
-                   (org-map-entries
-                    (lambda ()
-                      (let ((time (org-get-scheduled-time nil)))
-                        (cons time
-                              (cons (concat (when (and format-with-schedule
-                                                       time)
-                                              (format-time-string "%F %R: " time))
-                                            (org-offtime--format-headline))
-                                    (point-marker)))))
-                    nil nil
-                    'archive 'comment '(org-entry-is-done-p)))
-                  (lambda (x y)
-                    (let ((a (car x))
-                          (b (car y)))
-                      (cond
-                       ((and a b) (< (float-time a) (float-time b)))
-                       (a t)
-                       (b nil))))))))
+    (let (org-outline-path-cache)
+      (mapcar 'cdr
+              (sort (org-with-wide-buffer
+                     (org-map-entries
+                      (lambda ()
+                        (let ((time (org-get-scheduled-time nil)))
+                          (cons time
+                                (cons (concat (when (and format-with-schedule
+                                                         time)
+                                                (format-time-string "%F %R: " time))
+                                              (org-offtime--format-headline))
+                                      (point-marker)))))
+                      nil nil
+                      'archive 'comment '(org-entry-is-done-p)))
+                    (lambda (x y)
+                      (let ((a (car x))
+                            (b (car y)))
+                        (cond
+                         ((and a b) (< (float-time a) (float-time b)))
+                         (a t)
+                         (b nil)))))))))
 
 (defun org-offtime--format-headline ()
   "Format the outline path of the current heading."
