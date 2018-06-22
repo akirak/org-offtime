@@ -51,7 +51,13 @@
                         ("l"
                          (lambda (cand)
                            (org-offtime--clock-in cand 'offtime-lock))
-                         "lock"))))
+                         "lock")
+                        ("g" counsel-org-offtime--jump "go to the heading"))))
+
+(defun counsel-org-offtime--jump (cand)
+  (org-goto-marker-or-bmk (cond
+                           ((markerp cand) cand)
+                           ((consp cand) (cdr cand)))))
 
 (provide 'counsel-org-offtime)
 ;;; counsel-org-offtime.el ends here
