@@ -1,19 +1,21 @@
-EMACS ?= cask emacs
+EMAKE_SHA1            := 9095599536e5b3ad8c34a3dd3362dbb92ebf701f
+PACKAGE_BASENAME      := counsel-org-offtime
+PACKAGE_LISP          := offtime.el org-offtime.el counsel-org-offtime.el
 
-EMACS_BATCH = $(EMACS) -Q --batch --eval "(add-hook 'load-path \".\")"
+# override defaults
+PACKAGE_ARCHIVES      := gnu melpa
+#PACKAGE_TESTS         := test-sample.el # normally, EMake would discover these in the test/ directory
+PACKAGE_TEST_DEPS     := dash
+PACKAGE_TEST_ARCHIVES := gnu melpa
 
-FILES = offtime.el org-offtime.el counsel-org-offtime.el
+include emake.mk
 
-default: package-lint byte-compile
+.DEFAULT_GOAL: help
 
-run-package-lint.el:
-	curl -OL https://gist.githubusercontent.com/akirak/f53d7a09b36ef40fa216631672e06582/raw/d6945f0a4690e2df2df3850d1816bdf6bf476dc7/run-package-lint.el
+### Bootstrap and convenience targets
 
-package-lint: run-package-lint.el
-	$(EMACS_BATCH) \
-	-l package-lint.el $(FILES)
+emake.mk:                       ## download the emake Makefile
+	curl -O 'https://raw.githubusercontent.com/vermiculus/emake.el/$(EMAKE_SHA1)/emake.mk'
 
-byte-compile:
-	$(EMACS_BATCH) \
-	--eval '(setq byte-compile-error-on-warn t)' \
--f batch-byte-compile $(FILES)
+test:
+lint: lint-package-lint lint-checkdoc ## run lints
