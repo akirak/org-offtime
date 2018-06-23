@@ -59,7 +59,6 @@ Archived items, comment entries, and entries with one of the done states are
 omitted."
   (with-current-buffer (or (find-buffer-visiting org-offtime-file)
                            (find-file-noselect org-offtime-file))
-    (setq org-outline-path-cache nil)
     (mapcar 'cdr
             (sort (org-with-wide-buffer
                    (org-map-entries
