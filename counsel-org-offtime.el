@@ -55,6 +55,7 @@
                         ("g" counsel-org-offtime--jump "go to the heading"))))
 
 (defun counsel-org-offtime--jump (cand)
+  "Jump to CAND."
   (org-goto-marker-or-bmk (cond
                            ((markerp cand) cand)
                            ((consp cand) (cdr cand)))))
