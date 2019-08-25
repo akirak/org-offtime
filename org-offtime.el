@@ -44,7 +44,7 @@
 (require 'org-ql)
 (require 'org-element)
 
-(defgroup 'org-offtime nil
+(defgroup org-offtime nil
   "Offtime tracking with Org files."
   :group 'offtime)
 
