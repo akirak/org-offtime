@@ -2,7 +2,7 @@
 
 # org-offtime.el
 
-org-offtime.el lets you track off-time (break/nap/etc.) in the Emacs Org-Mode. "Starting an off-time clock" means running the following actions in sequence:
+org-offtime.el lets you track off time (break/nap/etc.) in the Emacs Org mode. "Starting an off-time clock" means running the following actions in sequence:
 
 1. Start a clock on an entry in org-mode.
 2. Run a suspend/lock command.
@@ -10,6 +10,7 @@ org-offtime.el lets you track off-time (break/nap/etc.) in the Emacs Org-Mode. "
 ## Prerequisites
 
 - Emacs 25.1 (with Org)
+- [org-ql](https://github.com/alphapapa/org-ql)
 - Ivy (optional)
 - An external command used to suspend/lock your computer (e.g. slock)
 
@@ -19,11 +20,9 @@ This package is not available on MELPA yet. Use quelpa or something.
 
 ## Configuration
 
-You can configure org-offtime using the Emacs customize interface. You will probably have to configure the following items. For details, refer to `offtime` and `org-offtime` customize groups. 
+See `offtime` and `org-offtime` customization groups.
 
-### Org file
-
-Customize `org-offtime-file` variable which is an org file to track off-time log. The default is offtime.org in `org-directory`. Headings in this file are listed in `org-offtime` and `counsel-org-offtime` commands. 
+[org-ql](https://github.com/alphapapa/org-ql) is used to define candidates selected using `org-offtime-clock-in` and `org-offtime-ivy`.
 
 ### Lock command
 
@@ -36,11 +35,9 @@ You can invoke one of these actions without starting a clock by running `offtime
 
 ## Usage
 
-You can start the off-time clock either from the file configured as `org-offtime-file`, or any given entry in org-mode:
-
-- Pick a task from `org-offtime-file` using `org-offtime` or `counsel-org-offtime`. 
-
-- To start an off-time clock on a given org entry under the cursor, use `org-offtime-clock-in`.
+- `org-offtime-clock-in` lets you select an entry to clock in.
+- `org-offtime-clock-in-this-entry` starts a clock on the entry in Org mode.
+- `org-offtime-ivy` is an Ivy version of `org-offtime-clock-in`. It supports alternative actions from `M-o`.
 
 ## License
 
