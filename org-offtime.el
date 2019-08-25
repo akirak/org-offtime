@@ -76,16 +76,12 @@ nil."
 
 (defun org-offtime-get-candidates ()
   "Get offtime entries."
-  (mapcar (lambda (element)
-            (let ((marker (org-element-property :org-hd-marker element)))
-              (with-current-buffer (marker-buffer marker)
-                (org-with-wide-buffer
-                 (goto-char (marker-position marker))
-                 (org-offtime--format-headline)
-                 (propertize (org-offtime--format-entry)
-                             'org-hd-marker marker)))))
-          (org-ql-select org-offtime-files org-offtime-query
-            :action 'element-with-markers)))
+  (org-ql-select
+    org-offtime-files
+    org-offtime-query
+    :action (lambda ()
+              (propertize (org-offtime--format-entry)
+                          'org-hd-marker (point-marker)))))
 
 (defun org-offtime--format-entry ()
   "Format the current entry."
