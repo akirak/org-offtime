@@ -76,6 +76,10 @@ nil."
 
 (defun org-offtime-get-candidates ()
   "Get offtime entries."
+  (unless org-offtime-files
+    (user-error "You need to set org-offtime-files first"))
+  (unless org-offtime-query
+    (user-error "You need to set org-offtime-query first"))
   (org-ql-select
     org-offtime-files
     org-offtime-query
