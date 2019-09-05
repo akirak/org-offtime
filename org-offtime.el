@@ -114,6 +114,7 @@ nil."
                (org-time-stamp-format t t))
               (org-offtime--format-entry))
      (goto-char marker)
+     (org-show-entry)
      (org-clock-in)))
   (when func
     ;; Await for the function to finish
